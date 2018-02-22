@@ -12,6 +12,7 @@ module.exports = function() {
     const request = require('request');
     const crypto = require('crypto');
     const stringHash = require('string-hash');
+    const PromiseA   = require('bluebird');
     const base = 'https://api.binance.com/api/';
     const wapi = 'https://api.binance.com/wapi/';
     const stream = 'wss://stream.binance.com:9443/ws/';
@@ -795,6 +796,23 @@ LIMIT_MAKER
                 return callback.call(this, error, data, symbol);
             });
         },
+
+        /* Promise based version 
+           TODO in the future convert the full library to use promises natively 
+           as it stands Bluebird promisification cannot be used everywhere in the library
+        */
+        candlesticks_prms: function(symbol, interval = '5m', options = {limit:500}){
+            let params = Object.assign({symbol:symbol, interval:interval}, options);
+            return new PromiseA((resolve, reject) => {
+                publicRequest(base+'v1/klines', params, (error, data)=>{
+                    if(error)
+                        reject(error);
+                    else 
+                        resolve(data);
+                });
+            });
+        },
+
         publicRequest: function(url, data, callback, method = 'GET') {
             publicRequest(url, data, callback, method)
         },
