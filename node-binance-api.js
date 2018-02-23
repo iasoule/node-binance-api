@@ -806,9 +806,9 @@ LIMIT_MAKER
             return new PromiseA((resolve, reject) => {
                 publicRequest(base+'v1/klines', params, (error, data)=>{
                     if(error)
-                        reject(error);
+                        return reject(error);
                     else 
-                        resolve(data);
+                        return resolve(data);
                 });
             });
         },
